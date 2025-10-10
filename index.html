@@ -1,189 +1,127 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Certificate Generator</title>
-  <style>
-    body {
-      font-family: 'Noto Sans Devanagari', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f0f0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .form-container {
-      background: white;
-      padding: 20px;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-    }
-    label { display: block; margin-top: 10px; }
-    input {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 15px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover { background: #0056b3; }
-
-    .certificate-container {
-      display: none;
-      position: relative;
-      width: 1123px;   /* A4 landscape @ 96dpi */
-      height: 794px;
-      margin-top: 30px;
-    }
-    #background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      z-index: 0;
-      pointer-events: none;
-    }
-    .cert-text {
-      position: absolute;
-      text-align: center;
-      width: 100%;
-      z-index: 1;
-    }
-    #refno {
-      position: absolute;
-      top: 20px;
-      left: 40px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    #date {
-      position: absolute;
-      top: 20px;
-      right: 40px;
-      font-size: 14px;
-      font-weight: bold;
-    }
-    #name {
-      top: 300px;
-      font-size: 32px;
-      font-weight: bold;
-    }
-    #fathername {
-      top: 360px;
-      font-size: 18px;
-      font-weight: normal;
-    }
-    #hinditext {
-      top: 420px;
-      font-size: 18px;
-      width: 80%;
-      left: 10%;
-      line-height: 1.6;
-    }
-    .download-btns {
-      margin-top: 20px;
-      display: none;
-    }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Certificate Generator</title>
+<style>
+  body { font-family: 'Noto Sans Devanagari', sans-serif; margin:0; padding:0; background:#f0f0f0; display:flex; flex-direction:column; align-items:center; }
+  .form-container { background:white; padding:20px; margin-top:20px; box-shadow:0 0 10px rgba(0,0,0,0.1); border-radius:8px; width:90%; max-width:500px; }
+  label { display:block; margin-top:10px; }
+  input { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:4px; }
+  button { margin-top:20px; padding:10px 15px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer; }
+  button:hover { background:#0056b3; }
+  .certificate-container { display:none; position:relative; width:1123px; height:794px; margin-top:30px; }
+  #background { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; pointer-events:none; }
+  .cert-text { position:absolute; text-align:center; width:100%; z-index:1; }
+  #refno { position:absolute; top:20px; left:40px; font-size:14px; font-weight:bold; }
+  #date { position:absolute; top:20px; right:40px; font-size:14px; font-weight:bold; }
+  #name { top:300px; font-size:32px; font-weight:bold; }
+  #fathername { top:360px; font-size:18px; font-weight:normal; }
+  #hinditext { top:420px; font-size:18px; width:80%; left:10%; line-height:1.6; }
+  .download-btns { margin-top:20px; display:none; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-  <div class="form-container">
-    <label>नाम (Name)</label>
-    <input type="text" id="inputName" placeholder="Enter Name">
 
-    <label>पिता/पति का नाम (Father/Husband Name)</label>
-    <input type="text" id="inputFather" placeholder="Enter Father/Husband Name">
+<div class="form-container">
+  <label>नाम (Name)</label>
+  <input type="text" id="inputName" placeholder="Enter Name">
+  <label>पिता/पति का नाम (Father/Husband Name)</label>
+  <input type="text" id="inputFather" placeholder="Enter Father/Husband Name">
+  <label>मोबाइल नंबर (Mobile)</label>
+  <input type="text" id="inputMobile" placeholder="Enter Mobile No">
+  <label>ईमेल (Email)</label>
+  <input type="email" id="inputEmail" placeholder="Enter Email">
+  <button onclick="generateCertificate()">Generate Certificate</button>
+</div>
 
-    <label>मोबाइल नंबर (Mobile)</label>
-    <input type="text" id="inputMobile" placeholder="Enter Mobile No">
-
-    <label>ईमेल (Email)</label>
-    <input type="email" id="inputEmail" placeholder="Enter Email">
-
-    <button onclick="generateCertificate()">Generate Certificate</button>
+<div class="certificate-container" id="certificate">
+  <img id="background" src="backgroundimage.png" alt="Certificate Background">
+  <div id="refno">Reference No.: <span id="refValue"></span></div>
+  <div id="date">Date: <span id="displayDate"></span></div>
+  <div class="cert-text" id="name">&lt;&lt;Name&gt;&gt;</div>
+  <div class="cert-text" id="fathername">पिता/पति &lt;&lt;Father or Husband name&gt;&gt;</div>
+  <div class="cert-text" id="hinditext">
+    को मिशन शक्ति 5.0 के अंतर्गत महिला सशक्तिकरण के लिए उनके उत्कृष्ट योगदान, भागीदारी और प्रतिबद्धता के लिए गर्व से नगर पंचायत उदाहरण, जनपद कासगंज द्वारा प्रदान किया जाता है। उनका समर्पण नारी सुरक्षा, नारी सम्मान और नारी स्वावलंबन की भावना को दर्शाता है।
   </div>
+</div>
 
-  <div class="certificate-container" id="certificate">
-    <img id="background" src="backgroundimage.png" alt="Certificate Background">
-    <div id="refno">Reference No.: <span id="refValue"></span></div>
-    <div id="date">Date: <span id="displayDate"></span></div>
-    <div class="cert-text" id="name">&lt;&lt;Name&gt;&gt;</div>
-    <div class="cert-text" id="fathername">पिता/पति &lt;&lt;Father or Husband name&gt;&gt;</div>
-    <div class="cert-text" id="hinditext">
-      को मिशन शक्ति 5.0 के अंतर्गत महिला सशक्तिकरण के लिए उनके उत्कृष्ट योगदान, भागीदारी और प्रतिबद्धता के लिए गर्व से नगर पंचायत उदाहरण, जनपद कासगंज द्वारा प्रदान किया जाता है। उनका समर्पण नारी सुरक्षा, नारी सम्मान और नारी स्वावलंबन की भावना को दर्शाता है।
-    </div>
-  </div>
+<div class="download-btns" id="downloadBtns">
+  <button onclick="downloadPNG()">Download PNG</button>
+  <button onclick="downloadPDF()">Download PDF</button>
+</div>
 
-  <div class="download-btns" id="downloadBtns">
-    <button onclick="downloadPNG()">Download PNG</button>
-    <button onclick="downloadPDF()">Download PDF</button>
-  </div>
+<script>
+const GOOGLE_SHEET_URL = "YOUR_WEB_APP_URL"; // <-- Replace with your deployed Google Apps Script URL
 
-  <script>
-    function generateReferenceNumber() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
-      const hour = String(now.getHours()).padStart(2, '0');
-      const minute = String(now.getMinutes()).padStart(2, '0');
-      const second = String(now.getSeconds()).padStart(2, '0');
-      return `${year}${month}${day}${hour}${minute}${second}/GOV01/KSJ`;
-    }
+function generateReferenceNumber() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth()+1).padStart(2,'0');
+  const day = String(now.getDate()).padStart(2,'0');
+  const hour = String(now.getHours()).padStart(2,'0');
+  const minute = String(now.getMinutes()).padStart(2,'0');
+  const second = String(now.getSeconds()).padStart(2,'0');
+  return `${year}${month}${day}${hour}${minute}${second}/GOV01/KSJ`;
+}
 
-    function generateCertificate() {
-      const name = document.getElementById('inputName').value;
-      const father = document.getElementById('inputFather').value;
+function generateCertificate() {
+  const name = document.getElementById('inputName').value.trim();
+  const father = document.getElementById('inputFather').value.trim();
+  const mobile = document.getElementById('inputMobile').value.trim();
+  const email = document.getElementById('inputEmail').value.trim();
 
-      document.getElementById('name').innerText = name;
-      document.getElementById('fathername').innerText = `पिता/पति ${father}`;
-      document.getElementById('displayDate').innerText = new Date().toLocaleDateString('en-GB');
-      document.getElementById('refValue').innerText = generateReferenceNumber();
+  if(!name || !father || !mobile || !email){
+    alert("सभी फ़ील्ड भरें।");
+    return;
+  }
 
-      document.getElementById('certificate').style.display = 'block';
-      document.getElementById('downloadBtns').style.display = 'block';
-    }
+  const refNo = generateReferenceNumber();
+  document.getElementById('name').innerText = name;
+  document.getElementById('fathername').innerText = `पिता/पति ${father}`;
+  document.getElementById('displayDate').innerText = new Date().toLocaleDateString('en-GB');
+  document.getElementById('refValue').innerText = refNo;
 
-    function downloadPNG() {
-      const certificate = document.getElementById('certificate');
-      html2canvas(certificate, { scale: 3 }).then(canvas => {
-        const link = document.createElement('a');
-        link.download = 'certificate.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      });
-    }
+  document.getElementById('certificate').style.display = 'block';
+  document.getElementById('downloadBtns').style.display = 'block';
 
-    function downloadPDF() {
-      const certificate = document.getElementById('certificate');
-      html2canvas(certificate, { scale: 3 }).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('l', 'pt', 'a4');
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save('certificate.pdf');
-      });
-    }
-  </script>
+  // Send data to Google Sheet
+  fetch(GOOGLE_SHEET_URL, {
+    method: "POST",
+    body: JSON.stringify({name, father, mobile, email, refNo}),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => console.log("Sheet Response:", data))
+  .catch(err => console.error("Sheet Error:", err));
+}
+
+function downloadPNG() {
+  const certificate = document.getElementById('certificate');
+  html2canvas(certificate, { scale: 3 }).then(canvas => {
+    const link = document.createElement('a');
+    link.download = 'certificate.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+function downloadPDF() {
+  const certificate = document.getElementById('certificate');
+  html2canvas(certificate, { scale: 3 }).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('l', 'pt', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save('certificate.pdf');
+  });
+}
+</script>
+
 </body>
 </html>
