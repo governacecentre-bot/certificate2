@@ -123,7 +123,7 @@
 
   <div class="certificate-container" id="certificate">
     <img id="background" src="backgroundimage.png" alt="Certificate Background">
-    <div id="refno">Reference No.: 025452545255/GOV01/KSJ</div>
+    <div id="refno">Reference No.: <span id="refValue"></span></div>
     <div id="date">Date: <span id="displayDate"></span></div>
     <div class="cert-text" id="name">&lt;&lt;Name&gt;&gt;</div>
     <div class="cert-text" id="fathername">पिता/पति &lt;&lt;Father or Husband name&gt;&gt;</div>
@@ -138,6 +138,17 @@
   </div>
 
   <script>
+    function generateReferenceNumber() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hour = String(now.getHours()).padStart(2, '0');
+      const minute = String(now.getMinutes()).padStart(2, '0');
+      const second = String(now.getSeconds()).padStart(2, '0');
+      return `${year}${month}${day}${hour}${minute}${second}/GOV01/KSJ`;
+    }
+
     function generateCertificate() {
       const name = document.getElementById('inputName').value;
       const father = document.getElementById('inputFather').value;
@@ -145,6 +156,7 @@
       document.getElementById('name').innerText = name;
       document.getElementById('fathername').innerText = `पिता/पति ${father}`;
       document.getElementById('displayDate').innerText = new Date().toLocaleDateString('en-GB');
+      document.getElementById('refValue').innerText = generateReferenceNumber();
 
       document.getElementById('certificate').style.display = 'block';
       document.getElementById('downloadBtns').style.display = 'block';
